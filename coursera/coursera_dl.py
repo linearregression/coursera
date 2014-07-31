@@ -83,6 +83,7 @@ _see_url = " See https://github.com/coursera-dl/coursera/issues/139"
 # We may, perhaps, want to move these elsewhere.
 import bs4
 import six
+import operator
 
 assert V(requests.__version__) >= V('1.2'), "Upgrade requests!" + _see_url
 assert V(six.__version__) >= V('1.3'), "Upgrade six!" + _see_url
@@ -690,11 +691,13 @@ def parseArgs():
             args.username, args.password = get_credentials(
                 username=args.username, password=args.password,
                 netrc=args.netrc)
+            logging.info("username %s, password %s", args.username, args.password)
         except CredentialsError as e:
             logging.error(e)
             sys.exit(1)
 
     return args
+
 
 
 def download_class(args, class_name):
@@ -728,6 +731,7 @@ def download_class(args, class_name):
         download_about(session, class_name, args.path, args.overwrite)
 
     downloader = get_downloader(session, class_name, args)
+ 
 
     # obtain the resources
     completed = download_lectures(
@@ -766,6 +770,7 @@ def main():
     for class_name in args.class_names:
         try:
             logging.info('Downloading class: %s', class_name)
+                        
             if download_class(args, class_name):
                 completed_classes.append(class_name)
         except requests.exceptions.HTTPError as e:
